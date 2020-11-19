@@ -2,7 +2,7 @@ import requests
 import json
 import sys
 
-auth_token = "wEQpUQ4rgyGpGG11h44rJqqwlycuhGu6"
+auth_token = "your_secret_api_token"
 
 def get_zone_id():
     try:
@@ -17,7 +17,7 @@ def get_zone_id():
     except requests.exceptions.RequestException:
         print('HTTP Request failed')
 
-def update_dns(zone_id, record_id, address):
+def update_dns(zone_id, record_id, address, record_name, dns_type):
     try:
         response = requests.put(
             url="https://dns.hetzner.com/api/v1/records/"+record_id,
@@ -28,8 +28,8 @@ def update_dns(zone_id, record_id, address):
             data=json.dumps({
                 "value": address,
                 "ttl": 120,
-                "type": "AAAA",
-                "name": "nas",
+                "type": dns_type,
+                "name": record_name,
                 "zone_id": zone_id
             })
         )
@@ -48,7 +48,7 @@ def get_record_id(zone_id, record_name):
             headers={
                 "Auth-API-Token": auth_token,
             }
-        )
+        )s
         json_response = json.loads(response.content)['records']
         for i in range(len(json_response)):
             name = json_response[i]['name']
@@ -59,4 +59,4 @@ def get_record_id(zone_id, record_name):
 
 #send_request(sys.argv[1])
 zone_id = get_zone_id()
-update_dns(zone_id, get_record_id(zone_id, sys.argv[1]), sys.argv[2])
+update_dns(zone_id, get_record_id(zone_id, sys.argv[1]), sys.argv[3], sys.argv[1], sys.argv[2])
